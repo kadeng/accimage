@@ -242,13 +242,20 @@ static PyTypeObject Image_Type = {
 };
 
 static int Image_init(ImageObject *self, PyObject *args, PyObject *kwds) {
-    static char* argnames[] = { "path", NULL };
-    const char *path;
+    static char* argnames[] = { "path", "bytes", NULL };
+    const char *path = NULL;
+    const char *bytes = NULL;
+    int bytes_len;
 
-    if (!PyArg_ParseTupleAndKeywords(args, kwds, "s", argnames, &path))
+    if (!PyArg_ParseTupleAndKeywords(args, kwds, "|zz#", argnames, &path, &bytes, &bytes_len))
         return -1;
 
-    image_from_jpeg(self, path);
+    if (bytes==NULL && path!=NULL)  {
+    	image_from_jpeg(self, path);
+    }
+    if (bytes!=NULL && bytes_len>0) {
+    	image_from_bytes(self, bytes, (unsigned long) bytes_len);
+    }
 
     return PyErr_Occurred() ? -1 : 0;
 }
