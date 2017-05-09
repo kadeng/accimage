@@ -252,9 +252,10 @@ static int Image_init(ImageObject *self, PyObject *args, PyObject *kwds) {
 
     if (bytes==NULL && path!=NULL)  {
     	image_from_jpeg(self, path);
-    }
-    if (bytes!=NULL && bytes_len>0) {
+    } else if (bytes!=NULL && bytes_len>0) {
     	image_from_bytes(self, bytes, (unsigned long) bytes_len);
+    } else {
+    	PyErr_Format(PyExc_IOError, "Image_init: Invalid arguments. Need either path or bytes.");
     }
 
     return PyErr_Occurred() ? -1 : 0;
